@@ -8,7 +8,7 @@
     <body>
         <aside>
             <h1>Bon retour 👋</h1>
-            <h3>Je recherche une nouvelle tenue</h3>
+            <h3>Je vérifie quelques trucs</h3>
             <div class="bottom">
                 <span class="loader"><span></span></span>
                 <p id="message">Chargement de l'application</p>
@@ -23,11 +23,10 @@
             1: "Création des fichiers de configuration",
             2: "Communication avec les services de données",
             3: "Téléchargement de la nouvelle mise à jour",
-            4: "Préparation de l'application",
+            4: "Lancement de l'application",
             5: "Installation de la mise à jour",
             6: "Extraction de la mise à jour",
-            7: "Application des composants de sécurité",
-            8: "Optimisation du système"
+            7: "Application des composants de sécurité"
         }
 
         ipcRenderer.on("progress", (event, data) => {
@@ -37,10 +36,7 @@
                document.querySelectorAll('.loader span')[0].style.width = data.progress + "%";
                if(data.status === 5 && data.target) document.querySelectorAll('logs')[0].innerText = data.target;
            } else {
-               if(data.status === 8 || data.status === 7)
-                   document.querySelectorAll('logs')[0].innerText = "L'application va bientôt redémarrer";
-               else
-                   document.querySelectorAll('logs')[0].innerText = "";
+               document.querySelectorAll('logs')[0].innerText = "";
                document.querySelectorAll('.loader span')[0].style.animation = "loading 0.75s infinite linear";
            }
         });

@@ -10,6 +10,26 @@ schemeList.updater = {
     frame: false,
     center: true,
     transparent: true,
+    show: false,
+    alwaysOnTop: true,
+    webPreferences: {
+        webviewTag: true,
+        nodeIntegration: true,
+        contextIsolation: false
+    }
+};
+schemeList.main = {
+    height: 715,
+    width: 1200,
+    minWidth: 600,
+
+    minHeight: 400,
+    center: true,
+    title: "HyperDownloader",
+    frame: false,
+    resizable: true,
+    show:false,
+    transparent: true,
     webPreferences: {
         webviewTag: true,
         nodeIntegration: true,
@@ -25,13 +45,13 @@ class createWindow {
         this.window = new BrowserWindow(schemeList[templateScheme.scheme])
         this.window.loadFile(`./bin/render/${templateScheme.scheme}.html`);
         this.window.once('ready-to-show', () => {
-            if (templateScheme.scheme === 'updater') {
-                new checkingUpdate(this.window);
-            }
+            this.window.show();
+            if (templateScheme.scheme === 'updater') return new checkingUpdate(this.window);
+            this.window.maximize();
+            return this.window;
            /* this.window.openDevTools();*/
         });
     }
 }
 
-module
-    .exports = createWindow;
+module.exports = createWindow;

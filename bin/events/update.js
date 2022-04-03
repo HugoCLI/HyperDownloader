@@ -3,6 +3,7 @@ const c = require("cli-color");
 const {ipcMain, app} = require('electron');
 const unzipper = require('unzipper');
 const walk = require('walk');
+const main = require("./main");
 
 let prefix_warn = '(' + c.yellow('WARN') + ')';
 const fs = require('fs')
@@ -49,6 +50,7 @@ class checkingUpdate {
                         this.startDownload(release);
                     } else {
                         this.window.webContents.send('progress', {status: 4});
+                        new main({updater: this.window}); // System main start
                     }
 
                 })
