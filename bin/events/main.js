@@ -11,8 +11,15 @@ class main {
     start() {
         const createWindow = require("./window");
         this.main = new createWindow({scheme: 'main'});
-        this.updater.parent = this.main;
+        this.updater.setAlwaysOnTop(false, 'pop-up-menu');
         this.updater.focus();
+        setTimeout(() => this.ready(), 2000);
+    }
+
+    ready() {
+        this.updater.close();
+        console.log(this.main);
+        this.main.setSkipTaskbar(false);
     }
 
 

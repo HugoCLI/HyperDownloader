@@ -11,7 +11,6 @@ schemeList.updater = {
     center: true,
     transparent: true,
     show: false,
-    alwaysOnTop: true,
     webPreferences: {
         webviewTag: true,
         nodeIntegration: true,
@@ -42,13 +41,14 @@ class createWindow {
     constructor(templateScheme = false) {
         Menu.setApplicationMenu(null);
         if (!templateScheme || !templateScheme.scheme || !schemeList[templateScheme.scheme]) return console.log(`ERROR : Window scheme no found [${templateScheme.scheme}]`);
-        this.window = new BrowserWindow(schemeList[templateScheme.scheme])
-        this.window.loadFile(`./bin/render/${templateScheme.scheme}.html`);
-        this.window.once('ready-to-show', () => {
-            this.window.show();
-            if (templateScheme.scheme === 'updater') return new checkingUpdate(this.window);
-            this.window.maximize();
-            return this.window;
+        let window = new BrowserWindow(schemeList[templateScheme.scheme])
+        window.loadFile(`./bin/render/${templateScheme.scheme}.html`);
+        window.once('ready-to-show', () => {
+            window.show();
+            if (templateScheme.scheme === 'updater') return new checkingUpdate(window);
+            window.maximize();
+            window.setSkipTaskbar(true);
+            return window;
            /* this.window.openDevTools();*/
         });
     }
