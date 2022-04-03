@@ -3,92 +3,42 @@
     <head>
         <title>HyperDownloader</title>
         <link rel="preload" href="assets/css/Rubik.css" as="style">
+        <link rel="stylesheet" href="assets/css/updater.css">
     </head>
     <body>
-        <style>
-            * {
-                font-family: 'Rubik', sans-serif;
-                box-sizing: border-box;
-                margin: unset;
-            }
-            aside {
-                background: #1a1a1a;
-                border-radius: 10px;
-                padding: 100px 50px;
-                position: fixed;
-                top: 0;
-                bottom: 0;
-                left: 0;
-                display: flex;
-                right: 0;
-                flex-direction: column;
-            }
-
-            aside .bottom {
-                position: absolute;
-                bottom:50px;
-                left:50px;
-                right:50px;
-            }
-
-            aside h1 {
-                font-weight: 300;
-                color:#eee;
-                font-size:30px;
-            }
-
-            aside h3 {
-                font-weight: 400;
-                color:#959595;
-                font-size:18px;
-                margin-top:35px;
-            }
-            aside p {
-                color:#808080;
-                font-size: 13px;
-            }
-
-
-
-            aside .loader {
-                display:flex;
-                height:4px;
-                margin-bottom: 25px;
-                width: 100%;
-                border-radius: 4px;
-                overflow: hidden;
-            }
-
-            aside .loader span {
-                animation: loading 0.75s infinite linear;
-                background: #43b97f;
-                height:5px;
-                display:flex;
-            }
-
-            @keyframes loading {
-                0% {
-                    margin-left:0;
-                    width:0;
-                }
-                50% {
-                    margin-left:0;
-                    width:100%;
-                }
-                100% {
-                    margin-left:100%;
-                    width:0;
-                }
-
-            }
-        </style>
         <aside>
             <h1>Bon retour 👋</h1>
-            <h3>Recherche de mise à jour plus classe</h3>
+            <h3>Je vérifie quelques trucs</h3>
             <div class="bottom">
                 <span class="loader"><span></span></span>
-                <p>Communication avec les services de données</p>
+                <p id="message">Chargement de l'application</p>
+                <logs></logs>
             </div>
         </aside>
     </body>
+    <script>
+        const { ipcRenderer } = require("electron");
+        let messages = {
+            0: "Chargement de l'application",
+            1: "Création des fichiers de configuration",
+            2: "Communication avec les services de données",
+            3: "Téléchargement de la nouvelle mise à jour",
+            4: "Lancement de l'application",
+            5: "Installation de la mise à jour",
+            6: "Extraction de la mise à jour",
+            7: "Application des composants de sécurité"
+        }
+
+        ipcRenderer.on("progress", (event, data) => {
+           if(messages[data.status]) document.getElementById('message').innerText = messages[data.status];
+           if(data.status === 3 || data.status === 5 && data.progress) {
+               document.querySelectorAll('.loader span')[0].style.animation = "none";
+               document.querySelectorAll('.loader span')[0].style.width = data.progress + "%";
+               if(data.status === 5 && data.target) document.querySelectorAll('logs')[0].innerText = data.target;
+           } else {
+               document.querySelectorAll('logs')[0].innerText = "";
+               document.querySelectorAll('.loader span')[0].style.animation = "loading 0.75s infinite linear";
+           }
+        });
+    </script>
 </html>
