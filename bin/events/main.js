@@ -17,9 +17,8 @@ class main {
     }
 
     ready() {
-        this.updater.close();
-        console.log(this.main);
-        this.main.setSkipTaskbar(false);
+ 
+
     }
 
 

@@ -48,6 +48,7 @@ class createWindow {
             if (templateScheme.scheme === 'updater') return new checkingUpdate(window);
             window.maximize();
             window.setSkipTaskbar(true);
+
             return window;
            /* this.window.openDevTools();*/
         });
