@@ -1,8 +1,8 @@
 const {app, BrowserWindow} = require('electron');
-const createWindow = require("./bin/events/window");
+const Window = require("./bin/events/window");
 
 const start = async () => {
-    new createWindow({scheme: 'updater'});
+    new Window().create('updater');
 }
 
 app.whenReady().then(() => start());

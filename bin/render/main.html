@@ -7,9 +7,68 @@
     </head>
     <body>
         <main>
+            <loader></loader>
+
+            <aside>
+                <section class="resume">
+                    <element>
+                        <svg viewBox="25 25 50 50">
+                            <circle cx="50" cy="50" r="20"></circle>
+                        </svg>
+                        <svg viewBox="25 25 50 50">
+                            <circle cx="50" cy="50" r="20"></circle>
+                        </svg>
+                    </element>
+                    <element>
+                        <h1>136 sur 500 Gb disponible</h1>
+                        <p>Emplacement <span>C:\Users\hugoc\Desktop\dev\HyperDownloader</span></p>
+                    </element>
+                </section>
+                <section class="action">
+                    <a href="">Télécharger</a>
+                </section>
+
+                <section class="active">
+                    <h3>Téléchargement en cours (0)</h3>
+                    <subsection>
+
+                    </subsection>
+                </section>
+                <section class="logs">
+                    <h3>Récemment (0)</h3>
+                    <subsection>
+
+                    </subsection>
+                </section>
+            </aside>
         </main>
     </body>
     <script>
+
+        const { ipcRenderer } = require("electron");
+
+        class main  {
+            constructor() {
+                this.doc = new doc;
+                this.doc.first('loader').remove();
+            }
+        }
+
+        class doc {
+            id = (id) => {
+                return document.querySelectorAll(`#${id}`)[0];
+            }
+            all = (selector) => {
+                return document.querySelectorAll(selector);
+            }
+            first = (selector) => {
+                return document.querySelectorAll(selector)[0];
+            }
+        }
+
+        window.addEventListener("DOMContentLoaded", (event) => {
+            ipcRenderer.on("ready-show", (event, data) => setTimeout(() => new main(), 1000));
+        });
 
     </script>
 </html>

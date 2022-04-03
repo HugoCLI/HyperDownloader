@@ -3,7 +3,21 @@
     box-sizing: border-box;
     margin: unset;
 }
+
 main {
+    background: #2a2a2a;
+    border-radius: 10px;
+    padding: 100px 50px;
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    display: flex;
+    right: 0;
+    flex-direction: column;
+}
+
+main loader {
     background: #2a2a2a;
     border-radius: 10px;
     padding: 50px;
@@ -16,3 +30,89 @@ main {
     flex-direction: column;
 }
 
+main aside {
+    position: relative;
+    min-width: 300px;
+    max-width: 1200px;
+    left: 0;
+    right: 0;
+    height: 100%;
+    margin: auto;
+    width: 100%;
+}
+
+section.resume {
+    background:#2f2f2f;
+    padding:25px 50px;
+    border-radius: 10px;
+    height: 180px;
+    /* Grid */
+
+    display:grid;
+    grid-template-columns: 175px calc(100% - 175px);
+}
+
+
+section.resume h1 {
+    color: #ccc;
+    font-weight: 300;
+    font-size: 30px;
+}
+
+section.resume p {
+    color:#858585;
+    font-size: 15px;
+    margin-top:20px;
+}
+
+section.resume element:nth-child(1) svg {
+    width: 8em;
+    height: 8em;
+    display: inline-flex;
+    position:absolute;
+    transform-origin: center;
+    animation: rotate 1s linear infinite;
+    -webkit-animation: rotate 1s linear infinite;
+}
+
+section.resume element:nth-child(2) {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+}
+section.resume element:nth-child(1) svg circle {
+    fill: none;
+    stroke: #3a3a3a;
+    stroke-width: 6;
+    stroke-dasharray: 130, 200;
+    stroke-dashoffset: 0;
+    stroke-linecap: round;
+    animation: dash 1s linear infinite;
+    -webkit-animation: dash 1s linear infinite;
+}
+
+section.resume element:nth-child(1) svg:nth-child(2) circle {
+    stroke: #dd4343;
+    stroke-width: 3 !important;
+    stroke-dasharray: 50, 200;
+}
+section {
+    margin-bottom: 50px;
+}
+section.action a {
+    background: #dd4343;
+    border-radius: 4px;
+    padding:10px 20px;
+    color:#1a1a1a;
+    font-weight: 600;
+    text-decoration: none;
+    font-size: 14px;
+}
+
+section.active h3, section.logs h3 {
+    color:#eee;
+    font-size: 20Px;
+    font-weight: 600;
+
+}
