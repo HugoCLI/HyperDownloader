@@ -139,48 +139,79 @@ class checkingUpdate {
         maj.on('file', (root, stat, next) => {
             console.log(prefix_warn + ' Found ' + c.cyan(stat.name) + ' in new release');
             let chemin = root.split(release)[1];
-            files.push({target: process.cwd() + chemin+'\\'+stat.name, focus: root+'\\'+stat.name, name: stat.name });
-            /* console.log(chemin+'\\'+stat.name);*/
+            if(process.cwd() + '\\bin\\'+ release !== root)
+                files.push({target: process.cwd() + chemin+'\\'+stat.name, focus: root+'\\'+stat.name, name: stat.name });
             next();
         });
 
         maj.on('end', () => {
 
             let index = 0;
+
             const loop = () => {
+
                 if(index < files.length) {
                     const file = files[index];
                     const prc = 100 / files.length * index+1;
-                    this.window.webContents.send('progress', {status: 5, progress:prc.toFixed(0), target: file.name });
-                    fs.readFile(file.focus, function read(err, data) {
-                        if (err) throw err;
+                    this.window.webContents.send('progress', {status: 5, progress:prc.toFixed(0), target: 'Installing ' + file.name });
 
-                        const content = data;
-                        fs.unlink(file.target, (err) => {
-                            if(err) return;
-                            console.log(prefix_warn + ' Deleting ' + c.cyan(file.name) + ' successfully');
-                            fs.writeFile(file.target, content, function (err) {
+
+                    let checkArbo = (file.target).split(process.cwd())[1];
+                    checkArbo = checkArbo.split('\\');
+
+
+                    let chemin = "\\";
+                    let ind = 1;
+                    const checkDir = () => {
+                        if(ind < checkArbo.length-1) {
+                            const dir = checkArbo[ind];
+                            if(!fs.existsSync(process.cwd()+ chemin  + dir)) {
+                                fs.mkdirSync(process.cwd()+ chemin +  dir)
+                                console.log(prefix_warn + ' Folder ' + c.cyan(chemin+dir) + ' created');
+                                chemin += dir + "\\";
+                                ind++;
+                                checkDir();
+
+                            } else {
+                                chemin += dir + "\\";
+                                ind++;
+                                checkDir();
+                            }
+
+                        } else {
+
+                            fs.readFile(file.focus, function read(err, data) {
                                 if (err) throw err;
-                                console.log(prefix_warn + ' Created ' + c.cyan(file.name) + ' successfully');
-                                setTimeout(() => { index+=1; loop() }, 25);
-                            });
 
-                        })
-                    });
+                                const content = data;
+                                fs.unlink(file.target, (err) => {
+                                    if(!err) console.log(prefix_warn + ' Deleting ' + c.cyan(file.name) + ' successfully');
+
+                                    fs.writeFile(file.target, content, function (err) {
+                                        if (err) throw err;
+                                        console.log(prefix_warn + ' Created ' + c.cyan(file.name) + ' successfully');
+                                        setTimeout(() => { index+=1; loop() }, 50);
+                                    });
+
+                                })
+                            });
+                        }
+                    }
+                    checkDir();
+
+
+
 
 
 
                 } else {
                     this.window.webContents.send('progress', {status: 7 });
-                    console.log(this.releaseDownload);
                     let json = {version: this.releaseDownload.tag_name, node_id: this.releaseDownload.id, beta: false  }
                     fs.unlink( process.cwd()+"\\bin\\configs\\version.json", (err) => {
                         if(err) return;
                         fs.writeFile( process.cwd()+"\\bin\\configs\\version.json", JSON.stringify(json), function (err) {
-                            setTimeout(() => {
-                                app.relaunch();
-                                this.window.close();
-                            }, 3000)
+                            /*this.window.close();*/
+                            /*app.relaunch();*/
                         });
                     });
 
