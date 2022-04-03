@@ -99,22 +99,26 @@ class checkingUpdate {
             this.window.webContents.send('progress', {status: 3, progress: prc.toFixed(0)});
         })
 
-        data.pipe(fs.createWriteStream(process.cwd() + '\\bin\\' + release.tag_name + ".zip"));
+        if(!fs.existsSync(process.cwd()+ "\\bin\\configs\\.tmp")) {
+            fs.mkdirSync(process.cwd() + "\\bin\\configs\\.tmp");
+        }
+
+        data.pipe(fs.createWriteStream(process.cwd() + '\\bin\\configs\\.tmp\\' + release.tag_name + ".zip"));
         data.on('end', async () => {
             console.log(prefix_warn + ' ' + c.cyan(release.tag_name) + ' have been saved');
             this.window.webContents.send('progress', {status: 6});
             setTimeout(async() => {
 
-                let zip = fs.createReadStream(process.cwd() + '\\bin\\' + release.tag_name + ".zip");
-                await zip.pipe(await unzipper.Extract({path: process.cwd() + '\\bin\\'}));
+                let zip = fs.createReadStream(process.cwd() + '\\bin\\configs\\.tmp\\' + release.tag_name + ".zip");
+                await zip.pipe(await unzipper.Extract({path: process.cwd() + '\\bin\\configs\\.tmp\\'}));
 
 
                 console.log(prefix_warn + ' ' + c.cyan(release.tag_name) + ' have been unzipped ');
                 await new Promise(r => setTimeout(r, 500));
                 let folder;
-                fs.unlink(process.cwd() + '\\bin\\' + release.tag_name + ".zip", (err) => {
+                fs.unlink(process.cwd() + '\\bin\\configs\\.tmp\\' + release.tag_name + ".zip", (err) => {
                     if(err) return;
-                    fs.readdir(process.cwd() + '\\bin\\', (err, files) => {
+                    fs.readdir(process.cwd() + '\\bin\\configs\\.tmp\\', (err, files) => {
                         files.forEach((elm) => {
                             console.log(elm);
                             if (elm.startsWith('HugoCLI') && !folder) folder = this.installRelease(elm);
@@ -130,10 +134,28 @@ class checkingUpdate {
 
     }
 
+    async restartServices() {
+        await new Promise(r => setTimeout(r, 2500));
+        this.window.close();
+        app.relaunch();
+    }
+
+    async optimizeApplication() {
+        this.window.webContents.send('progress', {status: 8 });
+        await new Promise(r => setTimeout(r, 1000));
+        fs.readdir(process.cwd() + '\\bin\\configs\\.tmp\\', (err, files) => {
+            files.forEach((elm) => {
+                fs.unlink(process.cwd() + '\\bin\\configs\\.tmp\\'+elm, (err) => {});
+            })
+        });
+        this.restartServices();
+    }
+
+
     installRelease(release) {
         this.window.webContents.send('progress', {status: 5});
-        console.log(process.cwd() + '\\bin\\'+ release);
-        let maj = walk.walk(process.cwd() + '\\bin\\'+ release, { followLinks: false });
+        console.log(process.cwd() + '\\bin\\configs\\.tmp\\'+ release);
+        let maj = walk.walk(process.cwd() + '\\bin\\configs\\.tmp\\'+ release, { followLinks: false });
 
         let files = [];
         maj.on('file', (root, stat, next) => {
@@ -153,7 +175,7 @@ class checkingUpdate {
                 if(index < files.length) {
                     const file = files[index];
                     const prc = 100 / files.length * index+1;
-                    this.window.webContents.send('progress', {status: 5, progress:prc.toFixed(0), target: 'Installing ' + file.name });
+                    this.window.webContents.send('progress', {status: 5, progress:prc.toFixed(0), target: file.name });
 
 
                     let checkArbo = (file.target).split(process.cwd())[1];
@@ -190,7 +212,7 @@ class checkingUpdate {
                                     fs.writeFile(file.target, content, function (err) {
                                         if (err) throw err;
                                         console.log(prefix_warn + ' Created ' + c.cyan(file.name) + ' successfully');
-                                        setTimeout(() => { index+=1; loop() }, 50);
+                                        setTimeout(() => { index+=1; loop() }, 0);
                                     });
 
                                 })
@@ -207,11 +229,10 @@ class checkingUpdate {
                 } else {
                     this.window.webContents.send('progress', {status: 7 });
                     let json = {version: this.releaseDownload.tag_name, node_id: this.releaseDownload.id, beta: false  }
-                    fs.unlink( process.cwd()+"\\bin\\configs\\version.json", (err) => {
+                    fs.unlink( process.cwd()+"\\bin\\configs\\version.json", async (err) => {
                         if(err) return;
-                        fs.writeFile( process.cwd()+"\\bin\\configs\\version.json", JSON.stringify(json), function (err) {
-                            /*this.window.close();*/
-                            /*app.relaunch();*/
+                        fs.writeFile( process.cwd()+"\\bin\\configs\\version.json", JSON.stringify(json), async (err) => {
+                            return this.optimizeApplication();
                         });
                     });
 
@@ -223,6 +244,7 @@ class checkingUpdate {
 
 
     }
+
 }
 
 module.exports = checkingUpdate;
